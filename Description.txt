@@ -1,0 +1,38 @@
+Dự án này là một bài tập lớn nhằm mục đích áp dụng các kiến thức cốt lõi của môn học Lập trình Hướng đối tượng. Cụ thể, dự án tập trung vào việc vận dụng các khái niệm về OOP, xây dựng giao diện đồ họa người dùng (GUI), xử lý sự kiện và thao tác với hệ thống tệp (File/CSDL). Sản phẩm của dự án là một trò chơi Cờ Caro kinh điển dành cho hai người chơi trên cùng một máy tính.
+Ứng dụng được phát triển bằng:
+Ngôn ngữ lập trình Java
+Ngôn ngữ chính để xây dựng toàn bộ ứng dụng
+Lý do: Java mạnh về xử lý OOP, dễ quản lý logic trò chơi, chạy đa nền tảng (Windows, Linux, macOS)
+Thư viện giao diện
+Java Swing: dùng để xây dựng GUI (cửa sổ, nút bấm, bàn cờ, hiển thị thông báo)
+Thành phần tiêu biểu: JFrame, JPanel, JButton, JLabel, JTable
+Cơ sở dữ liệu
+SQLite: hệ quản trị cơ sở dữ liệu nhẹ, không cần cài server riêng
+Dùng để lưu thông tin lịch sử ván chơi (tên người chơi, kết quả, thời gian)
+Kết nối từ Java qua JDBC driver (sqlite-jdbc)
+Quản lý dự án
+Git & GitHub/GitLab: để quản lý mã nguồn, làm việc nhóm, lưu trữ và chia sẻ code
+Giúp tránh mất code và dễ phối hợp giữa các thành viên
+IDE (môi trường phát triển): IntelliJ IDEA để code và chạy thử ứng dụng
+Code bao gồm:
+Giao diện (GUI)
+Menu/Buttons
+Bắt đầu chơi: nhập tên người chơi, khởi tạo bàn cờ mới
+Chơi lại: reset bàn cờ để chơi lại từ đầu
+Undo: quay lại một bước đi trước đó
+Lịch sử: hiển thị danh sách các ván đã chơi được lưu trong cơ sở dữ liệu SQLite
+Bàn cờ: lưới ô vuông (caro), nơi người chơi click chuột để đánh X hoặc O
+Thông tin người chơi: hiển thị tên, lượt đi
+Logic xử lý trò chơi
+Quản lý lượt chơi (X và O đánh luân phiên)
+Kiểm tra điều kiện thắng/thua (5 quân liên tiếp theo hàng, cột hoặc chéo).
+Xử lý khi người chơi bấm Undo (lấy lại nước đi)
+Kết thúc ván: thông báo người thắng, cho phép chơi lại
+Quản lý dữ liệu với SQLite
+Lưu: khi một ván cờ kết thúc, chương trình ghi thông tin (người chơi, kết quả, thời gian) vào SQLite
+Đọc/Hiển thị: khi chọn Lịch sử, ứng dụng truy xuất dữ liệu từ SQLite và hiển thị danh sách các trận đấu trước đó
+Các thao tác chính của người dùng
+Nhập tên khi bắt đầu
+Click chuột vào bàn cờ để đánh quân
+Sử dụng các nút (Chơi lại, Undo, Xem lịch sử)
+Đọc thông báo kết quả và lịch sử trận đấu
