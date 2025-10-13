@@ -1,0 +1,14 @@
+class Course {
+final String code;
+final String name;
+final int credit;
+Course(String code, String name, int credit){
+    this.code = code;
+    this.name = name;
+    this.credit = credit;
+}
+@Override
+public String toString(){
+    return code + " (" + credit + " TC)";
+}
+}
