@@ -1,0 +1,13 @@
+class Student {
+    final String id;
+    final String name;
+    
+    public Student(String id, String name){
+        this.id = id;
+        this.name = name;
+    }
+    @Override
+    public String toString(){
+        return id + " - " + name;
+    }
+}
