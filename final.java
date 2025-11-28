@@ -10,7 +10,6 @@ class Student implements Serializable {
     String id, name;
     public Student(String id, String name) { this.id = id; this.name = name; }
     @Override public String toString() { return id + " - " + name; }
-    @Override public boolean equals(Object o) { if(o instanceof Student) return id.equals(((Student)o).id); return false; }
 }
 
 class Course {
@@ -24,7 +23,7 @@ class Enrollment {
     public Enrollment(String s, String c, double sc) { sid=s; cid=c; score=sc; }
 }
 
-// Class Logic Tính điểm (Theo yêu cầu mới)
+// Logic Tính điểm
 class GradePolicy {
     static double toGPA4(double a){
         if (a >= 9.0) return 4.0;
@@ -71,7 +70,7 @@ public class BTLOOP extends JFrame {
 
     public BTLOOP() {
         loadData();
-        setTitle("App Điểm Sinh Viên"); setSize(850, 500); setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setTitle("Ứng Dụng Quản Lý Điểm Sinh Viên"); setSize(850, 500); setDefaultCloseOperation(EXIT_ON_CLOSE);
         JTabbedPane tabs = new JTabbedPane();
 
         // TAB 1: SINH VIÊN
@@ -80,9 +79,9 @@ public class BTLOOP extends JFrame {
 
         JTextField tfId = new JTextField(10);
         JTextField tfName = new JTextField(15);
-        JButton btnAddStd = new JButton("Thêm"), btnDelStd = new JButton("Xóa SV");
+        JButton btnAddStd = new JButton("Thêm/Sửa"), btnDelStd = new JButton("Xóa SV");
 
-        p1In.add(new JLabel("MSV:")); p1In.add(tfId); p1In.add(new JLabel("Tên:")); p1In.add(tfName);
+        p1In.add(new JLabel("MSV:")); p1In.add(tfId); p1In.add(new JLabel("Họ và Tên:")); p1In.add(tfName);
         p1In.add(btnAddStd); p1In.add(btnDelStd);
 
         tblStd = new JTable(tmStd);
@@ -102,12 +101,15 @@ public class BTLOOP extends JFrame {
         p2.add(new JScrollPane(tblGrd), "Center"); p2.add(p2In, "North");
 
         // TAB 3: TỔNG KẾT
-        tabs.addTab("SV", p1); tabs.addTab("Điểm", p2); tabs.addTab("GPA", new JScrollPane(new JTable(tmSum)));
+        tabs.addTab("Sinh Viên", p1); tabs.addTab("Điểm", p2); tabs.addTab("GPA", new JScrollPane(new JTable(tmSum)));
         add(tabs);
 
         // --- SỰ KIỆN ---
         btnAddStd.addActionListener(e -> {
-            if(tfId.getText().isEmpty()) return;
+            if(tfId.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Không được để trống thông tin!");
+                return;
+            }
             Student s = new Student(tfId.getText(), tfName.getText());
             students.removeIf(old -> old.id.equals(s.id));
             students.add(s);
@@ -125,6 +127,8 @@ public class BTLOOP extends JFrame {
                 refreshGrdTable();
                 saveAllStudents();
                 saveAllGrades();
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn dòng để xóa!");
             }
         });
 
@@ -133,12 +137,21 @@ public class BTLOOP extends JFrame {
                 Student s = (Student) cbStd.getSelectedItem();
                 Course c = (Course) cbCrs.getSelectedItem();
                 double sc = Double.parseDouble(tfSc.getText());
+                if (sc < 0 || sc > 10) {
+                    JOptionPane.showMessageDialog(this, "Điểm phải nằm trong khoảng 0 - 10!");
+                    return;
+                }
+
                 if(s == null) return;
                 enrollments.removeIf(x -> x.sid.equals(s.id) && x.cid.equals(c.name));
                 enrollments.add(new Enrollment(s.id, c.name, sc));
                 refreshGrdTable();
                 saveAllGrades();
-            } catch(Exception ex) { JOptionPane.showMessageDialog(this, "Điểm lỗi!"); }
+            } catch(NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Định dạng điểm không hợp lệ!");
+            } catch(Exception ex) {
+                JOptionPane.showMessageDialog(this, "Lỗi hệ thống!");
+            }
         });
 
         btnDelGrd.addActionListener(e -> {
@@ -149,10 +162,12 @@ public class BTLOOP extends JFrame {
                 enrollments.removeIf(x -> x.sid.equals(sid) && x.cid.equals(cid));
                 refreshGrdTable();
                 saveAllGrades();
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn dòng điểm để xóa!");
             }
         });
 
-        // Logic tính GPA theo GradePolicy
+        // Logic tính GPA
         tabs.addChangeListener(e -> {
             tmSum.setRowCount(0);
             for(Student s : students) {
@@ -164,21 +179,13 @@ public class BTLOOP extends JFrame {
                     }
                 }
                 double avg10 = (mau==0) ? 0 : tu/mau;
-
-                // Quy doi diem sang thang 4.0 va thang diem chu A
                 double gpa4 = GradePolicy.toGPA4(avg10);
                 String rank = GradePolicy.letterFromGpa(gpa4);
-
-                tmSum.addRow(new Object[]{
-                        s.id,
-                        s.name,
-                        String.format("%.2f", avg10),
-                        gpa4,
-                        rank
-                });
+                tmSum.addRow(new Object[]{ s.id, s.name, String.format("%.2f", avg10), gpa4, rank });
             }
         });
     }
+
     // --- HELPER FUNCTIONS ---
     void refreshStdTable() {
         tmStd.setRowCount(0); cbStd.removeAllItems();
